@@ -1,3 +1,18 @@
-$.ajaxPrefilter(function(options){
+$.ajaxPrefilter(function (options) {
     options.url = 'http://www.liulongbin.top:3007' + options.url
+    // 统一为有权限的设置请求头
+    if (options.url.indexOf('/my/') !== -1) {
+        options.headers = {
+            Authorization: localStorage.getItem('token') || ''
+        }
+    }
+    // 全局挂complete
+    options.complete = function (res){
+        if(res.responseJSON.status === 1 && res.responseJSON.message ==='身份认证失败！'){
+            // 1强制清除token
+            localStorage.removeItem('token'),
+            // 2强制跳转登录页
+            location.href='/login.html'
+        }
+    }
 })
